@@ -250,11 +250,27 @@ export default function Story() {
           </p>
 
           {/* Mission quote */}
-          <div className="bg-[#FAF7F0]/5 border border-[#C9A227]/30 rounded-2xl px-10 py-8 max-w-2xl mx-auto mb-12">
+          <div className="bg-[#FAF7F0]/5 border border-[#C9A227]/30 rounded-2xl px-10 py-8 max-w-2xl mx-auto mb-10">
             <p className="font-serif text-xl md:text-2xl text-[#FAF7F0] italic leading-relaxed">
               "We make nothing. We grow nothing. We simply remove every hand between the farm and your kitchen — and that changes everything."
             </p>
-            <p className="text-[#C9A227] text-xs font-bold uppercase tracking-widest mt-4">— The NatiNest Team</p>
+            <p className="text-[#C9A227] text-xs font-bold uppercase tracking-widest mt-4">— Shreyas K &amp; Gangadhar R, Co-Founders</p>
+          </div>
+
+          {/* Founders */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+            {[
+              { name: "Shreyas K",    role: "Co-Founder" },
+              { name: "Gangadhar R",  role: "Co-Founder" },
+            ].map((f) => (
+              <div key={f.name} className="flex flex-col items-center gap-2">
+                <div className="w-16 h-16 rounded-full bg-[#C9A227]/20 border-2 border-[#C9A227]/40 flex items-center justify-center">
+                  <span className="text-2xl font-serif font-bold text-[#C9A227]">{f.name[0]}</span>
+                </div>
+                <p className="text-[#FAF7F0] font-serif font-bold text-base">{f.name}</p>
+                <p className="text-[#4A7C5F] text-xs uppercase tracking-widest">{f.role}</p>
+              </div>
+            ))}
           </div>
 
           <Link

@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "opKkGaEfBHxX44O4EC7BR"
+uri = "file://NatiNest_SourceCode_Final.txt"
+type = "text"
+title = "NatiNest — Complete Source Code (Final)"

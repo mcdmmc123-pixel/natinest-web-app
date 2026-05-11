@@ -1,0 +1,1180 @@
+================================================================================
+  NATINEST — COMPLETE SOURCE CODE (Final)
+  Free-range egg subscription · Karnataka farms
+  Co-Founders: Shreyas K & Gangadhar R
+================================================================================
+
+IMAGE ASSETS (in attached_assets/)
+  Logo  : IMG-20260420-WA0277(1)_1778496631693.jpg
+  Shed  : 20260326_183557_1778496683869.jpg
+  Fence : 20260326_183826_1778496683924.jpg
+  Eggs  : 20260326_184126_1778496654846.jpg
+  Coop  : 20260326_183205_1778496774858.jpg
+  Land  : 20260326_184511_1778496683956.jpg
+
+================================================================================
+FILE: artifacts/natinest/src/assets.ts
+================================================================================
+import _logoImg   from "@assets/IMG-20260420-WA0277(1)_1778496631693.jpg";
+import _farmShed  from "@assets/20260326_183557_1778496683869.jpg";
+import _farmFence from "@assets/20260326_183826_1778496683924.jpg";
+import _farmEggs  from "@assets/20260326_184126_1778496654846.jpg";
+import _farmCoop  from "@assets/20260326_183205_1778496774858.jpg";
+import _farmLand  from "@assets/20260326_184511_1778496683956.jpg";
+
+export const logoImg   = _logoImg;
+export const farmShed  = _farmShed;
+export const farmFence = _farmFence;
+export const farmEggs  = _farmEggs;
+export const farmCoop  = _farmCoop;
+export const farmLand  = _farmLand;
+
+================================================================================
+FILE: artifacts/natinest/src/App.tsx
+================================================================================
+import { Switch, Route, Router as WouterRouter } from "wouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Layout } from "@/components/Layout";
+import { EggCursor } from "@/components/EggCursor";
+import Home from "@/pages/Home";
+import Story from "@/pages/Story";
+import HowItWorks from "@/pages/HowItWorks";
+import Membership from "@/pages/Membership";
+import NotFound from "@/pages/not-found";
+
+const queryClient = new QueryClient();
+
+function Router() {
+  return (
+    <Layout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/story" component={Story} />
+        <Route path="/how-it-works" component={HowItWorks} />
+        <Route path="/membership" component={Membership} />
+        <Route component={NotFound} />
+      </Switch>
+    </Layout>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <EggCursor />
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <Router />
+        </WouterRouter>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
+
+================================================================================
+FILE: artifacts/natinest/src/components/Layout.tsx
+================================================================================
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import { logoImg } from "@/assets";
+
+const NAV = [
+  { href: "/", label: "Home" },
+  { href: "/story", label: "Our Story" },
+  { href: "/how-it-works", label: "How It Works" },
+  { href: "/membership", label: "Join the Nest" },
+];
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => { setOpen(false); }, [location]);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  return (
+    <div className="min-h-[100dvh] flex flex-col bg-[#FAF7F0] text-[#0F1F18]">
+
+      {/* Single fixed header */}
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#FAF7F0] border-b border-[#EDE8DC] shadow-sm flex items-center px-6 md:px-12 justify-between">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="h-10 w-10 overflow-hidden rounded-full shrink-0 shadow-sm bg-[#FAF7F0]">
+            <img src={logoImg} alt="NatiNest" className="w-full object-cover object-top"
+              style={{ height: "120%", objectPosition: "center 0%" }} />
+          </div>
+          <div className="flex items-baseline gap-0">
+            <span className="font-serif text-2xl font-bold text-[#0F1F18] group-hover:text-[#1B3A2D] transition-colors">Nati</span>
+            <span className="font-serif text-2xl font-bold text-[#C9A227]">Nest</span>
+          </div>
+        </Link>
+
+        <button onClick={() => setOpen(!open)} className="flex flex-col gap-[5px] p-2 group" aria-label="Toggle menu">
+          <span className={`block w-6 h-[2px] bg-[#0F1F18] transition-all duration-300 origin-center ${open ? "rotate-45 translate-y-[7px]" : ""}`} />
+          <span className={`block w-6 h-[2px] bg-[#0F1F18] transition-all duration-300 ${open ? "opacity-0 scale-x-0" : ""}`} />
+          <span className={`block w-6 h-[2px] bg-[#0F1F18] transition-all duration-300 origin-center ${open ? "-rotate-45 -translate-y-[7px]" : ""}`} />
+        </button>
+      </header>
+
+      {/* Full-screen overlay menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div key="overlay"
+            initial={{ opacity: 0, x: "100%" }} animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }} transition={{ duration: 0.35, ease: [0.32, 0, 0.67, 0] }}
+            className="fixed inset-0 z-40 bg-[#1B3A2D] flex flex-col"
+          >
+            <div className="h-16 flex items-center justify-between px-6 md:px-12 border-b border-[#4A7C5F]/40">
+              <Link href="/" className="flex items-center gap-3">
+                <div className="h-10 w-10 overflow-hidden rounded-full shrink-0 bg-[#FAF7F0]">
+                  <img src={logoImg} alt="NatiNest" className="w-full object-cover object-top"
+                    style={{ height: "120%", objectPosition: "center 0%" }} />
+                </div>
+                <span className="font-serif text-2xl font-bold text-white">Nati<span className="text-[#C9A227]">Nest</span></span>
+              </Link>
+              <button onClick={() => setOpen(false)} aria-label="Close menu">
+                <X className="w-7 h-7 text-[#FAF7F0]" />
+              </button>
+            </div>
+
+            <nav className="flex-1 flex flex-col justify-center px-10 md:px-20 gap-2">
+              {NAV.map(({ href, label }, i) => (
+                <motion.div key={href} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.08 + i * 0.07 }}>
+                  <Link href={href}
+                    className={`block font-serif text-5xl md:text-7xl font-bold leading-tight py-2 transition-colors ${
+                      location === href ? "text-[#C9A227]" : "text-[#FAF7F0]/80 hover:text-[#C9A227]"
+                    }`}>{label}</Link>
+                </motion.div>
+              ))}
+            </nav>
+
+            <div className="px-10 md:px-20 pb-10 flex items-center justify-between">
+              <p className="text-[#4A7C5F] text-sm">Karnataka, India</p>
+              <a href="https://natinest.in" target="_blank" rel="noopener noreferrer"
+                className="text-[#C9A227] font-semibold text-sm hover:underline">natinest.in</a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="h-16 shrink-0" />
+
+      <main className="flex-1 flex flex-col">
+        <AnimatePresence mode="wait">
+          <motion.div key={location} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }} className="flex-1 flex flex-col">
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-[#1B3A2D] text-[#FAF7F0] border-t-4 border-[#C9A227]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div>
+              <Link href="/" className="flex items-center gap-3 mb-5">
+                <div className="h-14 w-14 overflow-hidden rounded-full shrink-0 bg-[#FAF7F0]">
+                  <img src={logoImg} alt="NatiNest" className="w-full object-cover object-top"
+                    style={{ height: "120%", objectPosition: "center 0%" }} />
+                </div>
+                <span className="font-serif text-2xl font-bold">Nati<span className="text-[#C9A227]">Nest</span></span>
+              </Link>
+              <p className="text-[#4A7C5F] text-base font-serif italic leading-relaxed max-w-xs">
+                Free roaming. Full truth. Zero compromise.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-bold tracking-widest uppercase text-[#C9A227] mb-2">Explore</h4>
+              {NAV.map(({ href, label }) => (
+                <Link key={href} href={href} className="hover:text-white text-[#4A7C5F] transition-colors w-fit">{label}</Link>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h4 className="text-xs font-bold tracking-widest uppercase text-[#C9A227] mb-1">NatiNest</h4>
+              <p className="text-[#EDE8DC]/70 text-sm leading-relaxed max-w-xs">
+                Born from a genuine frustration with fake "farm-fresh" labels — connecting city families directly
+                to Karnataka's finest free-roaming farms. Founded by Shreyas K & Gangadhar R.
+              </p>
+              <p className="text-[#4A7C5F] text-sm mt-1">Karnataka, India</p>
+            </div>
+          </div>
+
+          <div className="border-t border-[#4A7C5F]/30 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-[#4A7C5F] text-sm">© {new Date().getFullYear()} NatiNest. All rights reserved.</p>
+            <a href="https://natinest.in" target="_blank" rel="noopener noreferrer"
+              className="text-[#C9A227] font-semibold text-sm hover:underline">natinest.in</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/components/EggCursor.tsx
+================================================================================
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export function EggCursor() {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const move = (e: MouseEvent) => { setPos({ x: e.clientX, y: e.clientY }); setVisible(true); };
+    const hide = () => setVisible(false);
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseleave", hide);
+    return () => { window.removeEventListener("mousemove", move); window.removeEventListener("mouseleave", hide); };
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div key="egg-cursor" className="fixed pointer-events-none z-[9999] select-none"
+          animate={{ x: pos.x - 12, y: pos.y - 16 }}
+          transition={{ type: "spring", damping: 28, stiffness: 400, mass: 0.5 }}
+          initial={false}>
+          <span className="text-2xl opacity-70">🥚</span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/components/MarqueeStrip.tsx
+================================================================================
+import React from "react";
+
+export function MarqueeStrip() {
+  const items = [
+    "Free Roaming", "Karnataka Farms", "Zero Middlemen", "Full Traceability",
+    "Nest Membership", "Natural Feed Only", "Weekly Delivery",
+  ];
+
+  return (
+    <div className="bg-[#1B3A2D] py-3 overflow-hidden whitespace-nowrap flex relative z-10 w-full border-y border-[#4A7C5F]">
+      <div className="animate-marquee flex items-center">
+        {[...items, ...items, ...items, ...items].map((text, i) => (
+          <React.Fragment key={i}>
+            <span className="text-[#EDE8DC] uppercase tracking-wider font-semibold text-sm px-6">{text}</span>
+            <span className="text-[#C9A227] px-2">•</span>
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/pages/Home.tsx
+================================================================================
+import React, { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
+import { MarqueeStrip } from "@/components/MarqueeStrip";
+import { farmShed, farmFence, farmEggs, farmCoop, farmLand } from "@/assets";
+
+const heroPhotos = [farmLand, farmFence, farmCoop, farmShed, farmEggs];
+
+const fadeInUp = {
+  hidden:  { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+};
+const stagger = {
+  hidden:  {},
+  visible: { transition: { staggerChildren: 0.13 } },
+};
+
+const customerQuotes = [
+  { quote: "The yolk is so deep orange, my kids thought I'd switched to a different food entirely. I can never go back to supermarket eggs.", location: "Bengaluru" },
+  { quote: "I cracked the first egg and just stood there. It smelled like something I remember from my grandfather's village. That smell is real.", location: "Mysuru" },
+  { quote: "Finally — an egg that actually tastes like an egg. The weekly delivery is flawless. We haven't skipped a week in six months.", location: "Bengaluru" },
+];
+
+const tiles = [
+  { href: "/story",      photo: farmFence, num: "01", label: "Our Story",    tag: "How It Began",
+    copy: "Two friends, one visit to a Karnataka farm, and a frustration with every 'farm-fresh' lie on a supermarket shelf.", cta: "Read the Story" },
+  { href: "/how-it-works", photo: farmCoop, num: "02", label: "How It Works", tag: "The Process",
+    copy: "No warehouses. No cold storage. No mystery. From the finest Karnataka farms to your kitchen — just honest eggs.", cta: "See the Process" },
+  { href: "/membership", photo: farmEggs,  num: "03", label: "Join the Nest", tag: "Membership · ₹20/egg",
+    copy: "Start with 15 eggs a week — or choose exactly how many you need. We handle everything else.", cta: "View Plans", highlight: true },
+  { href: "/story",      photo: farmLand,  num: "04", label: "The Promise",   tag: "The NatiNest Standard",
+    copy: "Every carton carries the batch number and collection date. That is not marketing — that is accountability from farms we personally trust.", cta: "Learn More" },
+];
+
+export default function Home() {
+  const [current, setCurrent] = useState(0);
+  const [quoteIdx, setQuoteIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setCurrent(p => (p + 1) % heroPhotos.length), 4500);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setQuoteIdx(p => (p + 1) % customerQuotes.length), 5000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="w-full">
+
+      {/* HERO */}
+      <section className="w-full min-h-[calc(100vh-4rem)] flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2 h-[62vw] md:h-[calc(100vh-4rem)] relative overflow-hidden bg-[#0F1F18]">
+          <AnimatePresence initial={false}>
+            <motion.div key={current} initial={{ opacity: 0, scale: 1.0 }} animate={{ opacity: 1, scale: 1.1 }}
+              exit={{ opacity: 0 }} transition={{ duration: 5, ease: "linear" }} className="absolute inset-0">
+              <img src={heroPhotos[current]} alt="Karnataka farm" className="w-full h-full object-cover object-center" />
+            </motion.div>
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F1F18]/65 via-transparent to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0F1F18]/20 z-10 pointer-events-none" />
+
+          {/* Cycling customer quote */}
+          <div className="absolute bottom-16 left-6 right-6 z-20">
+            <AnimatePresence mode="wait">
+              <motion.div key={quoteIdx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.6 }}
+                className="bg-[#0F1F18]/60 backdrop-blur-sm rounded-xl p-4 border-l-2 border-[#C9A227]">
+                <p className="text-[#FAF7F0] font-serif italic text-sm leading-relaxed mb-2">
+                  "{customerQuotes[quoteIdx].quote}"
+                </p>
+                <p className="text-[#C9A227] text-[10px] font-bold uppercase tracking-widest">
+                  — Member · {customerQuotes[quoteIdx].location}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="absolute bottom-6 left-6 z-20">
+            <p className="text-[#FAF7F0]/60 text-[10px] font-bold uppercase tracking-[0.25em]">Partner Farms · Karnataka, India</p>
+          </div>
+          <div className="absolute bottom-6 right-6 z-20 flex gap-2">
+            {heroPhotos.map((_, i) => (
+              <button key={i} onClick={() => setCurrent(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${current === i ? "bg-[#C9A227] scale-125" : "bg-white/35"}`}
+                aria-label={`Slide ${i + 1}`} />
+            ))}
+          </div>
+        </div>
+
+        <div className="w-full md:w-1/2 px-8 md:px-14 lg:px-20 py-16 flex flex-col justify-center bg-[#FAF7F0]">
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.p variants={fadeInUp} className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227] mb-6">
+              Karnataka, India · Early Access
+            </motion.p>
+            <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#0F1F18] leading-[1.08] mb-6">
+              Eggs that carry<br /><span className="text-[#1B3A2D] italic">the truth of the farm.</span>
+            </motion.h1>
+            <motion.p variants={fadeInUp} className="text-base md:text-lg text-[#0F1F18]/70 mb-4 max-w-md leading-relaxed">
+              Your supermarket egg has been sitting in cold storage for up to 45 days. Ours was laid this morning. You will see the difference the second you crack it open.
+            </motion.p>
+            <motion.p variants={fadeInUp} className="text-base md:text-lg text-[#0F1F18]/70 mb-4 max-w-md leading-relaxed">
+              Zero middlemen. Free-roaming hens. Zero artificial feed. Weekly delivery — straight from Karnataka's finest farms to your kitchen.
+            </motion.p>
+            <motion.p variants={fadeInUp} className="text-sm font-bold text-[#1B3A2D] mb-10 max-w-md tracking-wide">
+              ₹20/egg. The most honest price tag in your kitchen.
+            </motion.p>
+            <motion.div variants={fadeInUp} className="flex flex-wrap gap-4 items-center">
+              <Link href="/membership"
+                className="inline-block bg-[#C9A227] text-[#0F1F18] px-8 py-4 rounded-full text-base font-bold hover:bg-[#b08e1f] hover:shadow-xl hover:-translate-y-1 transition-all">
+                Become a Founding Member
+              </Link>
+              <Link href="/story"
+                className="text-sm font-medium text-[#1B3A2D] border-b-2 border-[#1B3A2D]/30 pb-0.5 hover:border-[#1B3A2D] transition-colors">
+                Our Story →
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      <MarqueeStrip />
+
+      {/* Launch Tiles */}
+      <section className="w-full">
+        <div className="bg-[#0F1F18] py-10 px-6 text-center">
+          <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A227] mb-3">Explore NatiNest</motion.p>
+          <motion.h2 initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ delay: 0.1 }} className="font-serif text-3xl md:text-5xl text-[#FAF7F0] font-bold">
+            Four pages. One honest truth.
+          </motion.h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2">
+          {tiles.map((tile) => (
+            <Link key={tile.href + tile.num} href={tile.href}
+              className="block relative overflow-hidden group" style={{ minHeight: "62vw" }}>
+              <motion.img src={tile.photo} alt={tile.label} initial={{ scale: 1.0 }} whileInView={{ scale: 1.08 }}
+                viewport={{ once: true }} transition={{ duration: 7, ease: "linear" }}
+                className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-[#0F1F18]/55 group-hover:bg-[#0F1F18]/40 transition-colors duration-500" />
+              {tile.highlight && <div className="absolute inset-0 border-4 border-[#C9A227] pointer-events-none" />}
+              <div className="relative z-10 h-full flex flex-col justify-end p-10 md:p-14 min-h-[62vw] md:min-h-[44vw] lg:min-h-[36vw]">
+                <span className="text-[#C9A227]/30 font-serif text-8xl font-bold absolute top-6 right-8 leading-none select-none">{tile.num}</span>
+                <span className="text-[#C9A227] text-[10px] font-bold uppercase tracking-[0.28em] mb-3 block">{tile.tag}</span>
+                <h3 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4 leading-tight group-hover:text-[#C9A227] transition-colors duration-300">{tile.label}</h3>
+                <p className="text-[#FAF7F0]/65 text-base leading-relaxed max-w-sm mb-6">{tile.copy}</p>
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-[#C9A227] group-hover:gap-4 transition-all duration-300 uppercase tracking-wider">
+                  {tile.cta}<span className="text-lg">→</span>
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="bg-[#FAF7F0] py-20 px-6 text-center">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="max-w-3xl mx-auto">
+          <motion.h2 variants={fadeInUp} className="font-serif text-3xl md:text-5xl text-[#0F1F18] font-bold mb-5">
+            One egg. One truth. <span className="text-[#C9A227] italic">Zero compromise.</span>
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-[#0F1F18]/60 text-lg mb-10">
+            Supermarkets sell eggs. We deliver mornings you can trust.
+          </motion.p>
+          <motion.div variants={fadeInUp}>
+            <Link href="/membership"
+              className="inline-block bg-[#C9A227] text-[#0F1F18] hover:bg-[#b08e1f] px-10 py-5 rounded-full font-bold text-xl transition-all hover:shadow-xl hover:-translate-y-1">
+              Reserve Your Spot Today
+            </Link>
+          </motion.div>
+        </motion.div>
+      </section>
+    </div>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/pages/Story.tsx
+================================================================================
+import React from "react";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
+import { farmLand, farmFence, farmEggs, farmShed } from "@/assets";
+
+const fadeInUp = {
+  hidden:  { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+};
+
+const farmQuotes = [
+  { quote: "These hens eat what the land gives them. The egg you get is exactly that — the land itself, in a shell.", attr: "From Karnataka's red-soil farms" },
+  { quote: "No cage. No crowd. Just open ground, morning sun, and whatever the earth provides. That is all it takes.", attr: "Free-roaming farm, Karnataka" },
+  { quote: "The yolk turns deep orange when the bird lives right. You cannot fake that colour. Nature doesn't lie.", attr: "Multi-generational farm, Karnataka" },
+];
+
+export default function Story() {
+  return (
+    <div className="flex flex-col w-full bg-[#FAF7F0]">
+
+      {/* Hero */}
+      <section className="relative w-full h-[60vh] min-h-[400px] bg-[#0F1F18] overflow-hidden">
+        <motion.img src={farmLand} alt="Karnataka farmland"
+          initial={{ scale: 1.0 }} animate={{ scale: 1.08 }} transition={{ duration: 9, ease: "linear" }}
+          className="absolute inset-0 w-full h-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F1F18] to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-4">
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227]">Our Story</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-serif text-4xl md:text-6xl text-white font-bold max-w-4xl leading-tight">
+            Every 'farm fresh' label is a lie.{" "}
+            <span className="text-[#C9A227] italic">Except ours.</span>
+          </motion.h1>
+        </div>
+      </section>
+
+      {/* Origin Story */}
+      <section className="py-24 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.8 }}>
+              <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227] mb-4">How It Started</p>
+              <h2 className="font-serif text-3xl md:text-4xl text-[#0F1F18] font-bold mb-8">
+                Born from a <span className="text-[#C9A227] italic">simple frustration.</span>
+              </h2>
+              <div className="text-lg text-gray-800 space-y-6 leading-relaxed">
+                <p>We wanted real eggs. Not the pale, watery supermarket kind packed in cold storage for 30–45 days — but the kind with deep orange yolks that smell like the farm, that taste like something.</p>
+                <p>So we visited farms in Karnataka. What we saw changed everything — free-roaming hens, wholesome natural feed, red Karnataka soil, and eggs with deep orange yolks that no supermarket shelf could ever match.</p>
+                <p>The farms had everything. Except a way to reach city families without losing half the value to middlemen. NatiNest is that connection — sourcing from the finest Karnataka farms and delivering directly to you. No warehouses, no middlemen, no markup. Just an honest price for an honest egg.</p>
+              </div>
+              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-[#1B3A2D]/10 pt-10">
+                {[
+                  { num: "0",    label: "Middlemen",   sub: "Farm direct" },
+                  { num: "100%", label: "Traceable",   sub: "Know your batch" },
+                  { num: "∞",   label: "Transparent", sub: "No surprises" },
+                ].map((stat) => (
+                  <div key={stat.num} className="text-center">
+                    <div className="text-4xl font-serif font-bold text-[#1B3A2D]">{stat.num}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-[#C9A227] mt-1">{stat.label}</div>
+                    <div className="text-xs text-[#0F1F18]/50 mt-0.5">{stat.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }} transition={{ duration: 0.8 }} className="grid grid-cols-2 gap-4 h-[600px]">
+              <div className="col-span-2 h-1/2 overflow-hidden rounded-xl">
+                <motion.img src={farmFence} alt="Chickens on fence" initial={{ scale: 1.0 }} whileInView={{ scale: 1.07 }}
+                  viewport={{ once: true }} transition={{ duration: 7, ease: "linear" }} className="w-full h-full object-cover" />
+              </div>
+              <div className="h-full overflow-hidden rounded-xl">
+                <motion.img src={farmLand} alt="Karnataka farm land" initial={{ scale: 1.0 }} whileInView={{ scale: 1.07 }}
+                  viewport={{ once: true }} transition={{ duration: 8, ease: "linear" }} className="w-full h-full object-cover" />
+              </div>
+              <div className="h-full overflow-hidden rounded-xl">
+                <motion.img src={farmEggs} alt="Fresh eggs in basket" initial={{ scale: 1.0 }} whileInView={{ scale: 1.07 }}
+                  viewport={{ once: true }} transition={{ duration: 8, ease: "linear" }} className="w-full h-full object-cover" />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Farm Quotes */}
+      <section className="bg-[#1B3A2D] py-20 px-6">
+        <div className="container mx-auto max-w-5xl">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="text-center mb-14">
+            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227] mb-4">From the Source</p>
+            <h2 className="font-serif text-3xl md:text-5xl text-[#FAF7F0] font-bold">
+              The farms <span className="text-[#C9A227] italic">speak for themselves.</span>
+            </h2>
+            <p className="text-[#EDE8DC]/60 text-base mt-4 max-w-xl mx-auto">
+              We source from multiple Karnataka farms — each one chosen for its commitment to free-roaming, natural feed, and honesty.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {farmQuotes.map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="bg-[#FAF7F0]/5 border border-[#C9A227]/20 rounded-2xl p-8">
+                <p className="text-[#C9A227] text-3xl font-serif leading-none mb-4">"</p>
+                <p className="text-[#EDE8DC] font-serif italic text-base leading-relaxed mb-6">{item.quote}</p>
+                <p className="text-[#4A7C5F] text-xs font-bold uppercase tracking-wider">— {item.attr}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="bg-[#FAF7F0] py-12 border-y border-[#1B3A2D]/10">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-24 text-center">
+            <div><div className="font-serif text-4xl text-[#C9A227] font-bold">0</div><div className="uppercase tracking-widest text-sm font-bold text-[#1B3A2D] mt-2">Middlemen</div></div>
+            <div className="hidden md:block w-px h-12 bg-[#1B3A2D]/20" />
+            <div><div className="font-serif text-4xl text-[#4A7C5F] font-bold">100%</div><div className="uppercase tracking-widest text-sm font-bold text-[#1B3A2D] mt-2">Traceable</div></div>
+            <div className="hidden md:block w-px h-12 bg-[#1B3A2D]/20" />
+            <div><div className="font-serif text-4xl text-[#0F1F18] font-bold">∞</div><div className="uppercase tracking-widest text-sm font-bold text-[#1B3A2D] mt-2">Transparent</div></div>
+          </div>
+        </div>
+      </section>
+
+      {/* What Makes Us Different */}
+      <section className="py-24 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="text-center mb-16">
+            <h2 className="font-serif text-3xl md:text-5xl text-[#0F1F18] font-bold">What Makes a NatiNest Egg Different</h2>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { img: farmEggs, alt: "Eggs in wicker basket",     title: "Hens With Space & Purpose",
+                body: "No cages. No crowding. Our birds live as nature intended, scratching in the dirt and roaming free under the Karnataka sun." },
+              { img: farmLand, alt: "Karnataka coconut farmland", title: "Karnataka's Natural Land",
+                body: "Raised on the rich red soil of Karnataka plantations. The environment shapes the egg — and these eggs are extraordinary." },
+              { img: farmShed, alt: "Inside the farm shed",       title: "Zero Artificial Feed",
+                body: "No synthetic colours to fake a dark yolk. Only wholesome natural foraging and quality grains produce our true deep orange yolks." },
+            ].map((card, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                <div className="h-48 overflow-hidden">
+                  <motion.img src={card.img} alt={card.alt} initial={{ scale: 1.0 }} whileInView={{ scale: 1.07 }}
+                    viewport={{ once: true }} transition={{ duration: 7, ease: "linear" }} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-8">
+                  <h3 className="font-serif text-2xl font-bold text-[#1B3A2D] mb-3">{card.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{card.body}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Vision + Founders */}
+      <section className="bg-[#1B3A2D] py-24 px-6 text-white text-center">
+        <div className="container mx-auto max-w-4xl">
+          <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227] mb-4">Why NatiNest Exists</p>
+          <h2 className="font-serif text-4xl font-bold mb-6">
+            Built by people who got <span className="text-[#C9A227] italic">tired of being lied to.</span>
+          </h2>
+          <p className="text-[#EDE8DC]/70 text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+            We're not a corporation. We're not farm owners. We're a small team that visited Karnataka farms,
+            saw what a real egg looks and tastes like, and decided no city family should have to guess.
+          </p>
+
+          <div className="bg-[#FAF7F0]/5 border border-[#C9A227]/30 rounded-2xl px-10 py-8 max-w-2xl mx-auto mb-10">
+            <p className="font-serif text-xl md:text-2xl text-[#FAF7F0] italic leading-relaxed">
+              "We make nothing. We grow nothing. We simply remove every hand between the farm and your kitchen — and that changes everything."
+            </p>
+            <p className="text-[#C9A227] text-xs font-bold uppercase tracking-widest mt-4">— Shreyas K & Gangadhar R, Co-Founders</p>
+          </div>
+
+          {/* Founders */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+            {[
+              { name: "Shreyas K",   role: "Co-Founder" },
+              { name: "Gangadhar R", role: "Co-Founder" },
+            ].map((f) => (
+              <div key={f.name} className="flex flex-col items-center gap-2">
+                <div className="w-16 h-16 rounded-full bg-[#C9A227]/20 border-2 border-[#C9A227]/40 flex items-center justify-center">
+                  <span className="text-2xl font-serif font-bold text-[#C9A227]">{f.name[0]}</span>
+                </div>
+                <p className="text-[#FAF7F0] font-serif font-bold text-base">{f.name}</p>
+                <p className="text-[#4A7C5F] text-xs uppercase tracking-widest">{f.role}</p>
+              </div>
+            ))}
+          </div>
+
+          <Link href="/membership"
+            className="inline-block bg-[#C9A227] hover:bg-[#b08e1f] text-[#0F1F18] px-10 py-5 rounded-full font-bold text-xl transition-all shadow-xl hover:-translate-y-1">
+            Join the Nest
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/pages/HowItWorks.tsx
+================================================================================
+import React from "react";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
+
+const steps = [
+  { num: "01", title: "You Choose Your Plan",
+    desc: "Pick 15 eggs per week — our recommended weekly plan — or choose a custom quantity that suits your family exactly. No lock-in. Pause or cancel anytime.",
+    accent: "Takes 2 minutes." },
+  { num: "02", title: "We Source From Our Network",
+    desc: "Your order goes directly to our partner farms in Karnataka. We source from multiple trusted free-roaming farms — no single point of failure, always fresh. No warehouse, no cold storage.",
+    accent: "Multi-farm network. Always available." },
+  { num: "03", title: "Packed with Full Traceability",
+    desc: "Each carton is packed with the batch number and collection date. You know exactly which batch your egg came from and when it was collected. No guessing, no mystery.",
+    accent: "Total transparency." },
+  { num: "04", title: "Delivered to Your Door",
+    desc: "Place your order today — your first delivery arrives within 7 days. After that, deliveries flow continuously on your chosen schedule. These eggs haven't sat in a cold room for a month. They're the real thing.",
+    accent: "First delivery within 7 days. Then weekly." },
+];
+
+const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.18 } } };
+const itemVariants = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } } };
+const fadeInUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } } };
+
+export default function HowItWorks() {
+  return (
+    <div className="w-full bg-[#EDE8DC] min-h-screen">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 py-16 md:py-24">
+        <div className="text-center mb-20">
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227] mb-5">The Process</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-serif font-bold text-[#0F1F18] leading-tight mb-6">
+            Refreshingly simple.<br /><span className="text-[#1B3A2D] italic">Because honest food should be.</span>
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="text-base md:text-lg text-[#0F1F18]/70 max-w-2xl mx-auto leading-relaxed mb-3">
+            The problem was never eggs. It was the eleven hands they passed through before reaching you — each one adding days, cold storage, and a markup.
+          </motion.p>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}
+            className="text-base md:text-lg text-[#0F1F18]/70 max-w-2xl mx-auto leading-relaxed">
+            NatiNest cuts every single one of them. Here is the whole process — no jargon, no fine print, no surprises.
+          </motion.p>
+        </div>
+
+        <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-20">
+          {steps.map((step, i) => (
+            <motion.div key={i} variants={itemVariants}
+              className="bg-[#FAF7F0] p-10 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group border border-[#4A7C5F]/10 cursor-default">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#C9A227] to-[#1B3A2D] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+              <div className="text-[#1B3A2D]/[0.06] text-9xl font-serif italic font-bold absolute -right-3 -bottom-6 select-none pointer-events-none group-hover:scale-110 transition-transform duration-500 leading-none">{step.num}</div>
+              <div className="w-10 h-[3px] bg-[#C9A227] mb-8 group-hover:w-16 transition-all duration-300" />
+              <h3 className="text-2xl font-serif font-bold text-[#0F1F18] mb-3 relative z-10">{step.title}</h3>
+              <p className="text-[#0F1F18]/70 leading-relaxed relative z-10 mb-4">{step.desc}</p>
+              <p className="text-[#C9A227] text-sm font-bold uppercase tracking-wider relative z-10">{step.accent}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-[#FAF7F0] border-l-4 border-[#C9A227] rounded-2xl px-8 py-7 mb-16 flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="text-4xl shrink-0">📅</div>
+          <div>
+            <p className="font-serif text-xl font-bold text-[#1B3A2D] mb-1">Order today. Receive in 7 days.</p>
+            <p className="text-[#0F1F18]/60 text-base leading-relaxed">
+              Your first batch arrives within 7 days of confirming your reservation. After that, eggs flow continuously — no single bulk delivery day. Every customer is on their own rolling weekly cycle so freshness is never compromised.
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.7 }} className="bg-[#1B3A2D] rounded-3xl px-10 md:px-16 py-14 mb-16 text-center">
+          <h2 className="text-2xl md:text-4xl font-serif font-bold text-[#FAF7F0] mb-5">Why does this matter?</h2>
+          <p className="text-[#FAF7F0]/60 text-base md:text-lg max-w-3xl mx-auto leading-relaxed mb-3">
+            Most Indian families have never tasted a truly wholesome, fresh egg. Not once. The last time you cracked one open, it had already spent weeks in a cold room you have never seen, handled by people you will never know.
+          </p>
+          <p className="text-[#FAF7F0]/60 text-base md:text-lg max-w-3xl mx-auto leading-relaxed mb-8">
+            Every NatiNest carton shows you the batch number and the collection date. That is not marketing. That is just honesty.
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+            {[
+              { val: "7 days", label: "First delivery after order" },
+              { val: "100%",   label: "Free-roaming hens" },
+              { val: "₹0",     label: "Supermarket markup" },
+            ].map((s) => (
+              <div key={s.val} className="text-center">
+                <div className="text-3xl md:text-4xl font-serif font-bold text-[#C9A227]">{s.val}</div>
+                <div className="text-[#FAF7F0]/50 text-xs uppercase tracking-widest mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+          className="text-center py-6 mb-10">
+          <p className="font-serif text-2xl text-[#0F1F18] font-bold mb-2">
+            "Every carton tells you exactly when it was collected. That's not a feature — that's a right."
+          </p>
+          <p className="text-[#0F1F18]/50 mt-2">Nature built the recipe. We just deliver it — unchanged, unprocessed, unapologetic.</p>
+        </motion.div>
+
+        <div className="text-center">
+          <Link href="/membership"
+            className="inline-block bg-[#C9A227] text-[#0F1F18] px-10 py-4 rounded-full text-lg font-bold hover:bg-[#b08e1f] hover:shadow-xl hover:-translate-y-1 transition-all">
+            Join the Nest
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/pages/Membership.tsx
+================================================================================
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Check, Truck, MapPin, Package, Star, ShieldCheck } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { farmEggs } from "@/assets";
+
+const formSchema = z.object({
+  fullName:    z.string().min(2, "Name is required"),
+  phone:       z.string().min(10, "Valid phone number is required"),
+  email:       z.string().email("Valid email is required"),
+  address:     z.string().min(10, "Please enter your full delivery address"),
+  city:        z.string().min(1, "Please select a city"),
+  plan:        z.string().min(1, "Please select a plan"),
+  customCount: z.string().optional(),
+  message:     z.string().optional(),
+}).refine((data) => {
+  if (data.plan === "custom") {
+    const count = parseInt(data.customCount ?? "0");
+    return count >= 6 && count <= 500;
+  }
+  return true;
+}, { message: "Please enter a valid egg count (6–500)", path: ["customCount"] });
+
+type FormValues = z.infer<typeof formSchema>;
+
+const tiers = [
+  {
+    id: "weekly", name: "Weekly Nest", perEgg: "₹20", weeklyTotal: "₹300", monthlyNote: "~₹1,200/month",
+    volume: "15 eggs/week", tag: "Perfect for individuals & couples", popular: true,
+    features: [
+      "15 wholesome eggs delivered every week", "Free weekly delivery",
+      "Batch number & collection date on every carton", "Full traceability — sourced from verified Karnataka farms",
+      "First delivery within 7 days of confirmation", "Continuous weekly flow — not a single bulk day", "Pause or cancel anytime",
+    ],
+  },
+  {
+    id: "custom", name: "Custom Nest", perEgg: "₹20", weeklyTotal: "Your choice", monthlyNote: "₹20 per egg",
+    volume: "You choose", tag: "Pick your exact weekly count", popular: false,
+    features: [
+      "You specify exactly how many eggs per week", "Minimum 6 eggs, no maximum limit", "Free weekly delivery",
+      "Batch number & collection date on every carton", "Full traceability — sourced from verified Karnataka farms",
+      "First delivery within 7 days of confirmation", "Pause or cancel anytime",
+    ],
+  },
+];
+
+const perks = [
+  { icon: Truck,       title: "Farm-to-door, every week",          desc: "Collected fresh. Delivered directly. No cold-storage detour." },
+  { icon: MapPin,      title: "Full traceability on every carton", desc: "Batch number and collection date — always visible, never hidden." },
+  { icon: Package,     title: "Zero supermarket markup",           desc: "You pay fairly. Not a retail chain." },
+  { icon: Star,        title: "Seasonal farm updates",             desc: "Photos, stories, and news straight from our partner farms." },
+  { icon: ShieldCheck, title: "Pause or cancel anytime",           desc: "No lock-in. No penalties. Your membership, your rules." },
+];
+
+const fadeInUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
+
+export default function Membership() {
+  const [success, setSuccess] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { fullName: "", phone: "", email: "", address: "", city: "", plan: "weekly", customCount: "", message: "" },
+  });
+
+  const selectedPlan = form.watch("plan");
+
+  const onSubmit = (data: FormValues) => {
+    console.log("Form submitted", data);
+    setSuccess(true);
+    setTimeout(() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100);
+  };
+
+  const handleSelectPlan = (planId: string) => {
+    form.setValue("plan", planId);
+    setTimeout(() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, 100);
+  };
+
+  return (
+    <div className="w-full bg-[#FAF7F0] min-h-screen">
+      {/* Header */}
+      <div className="relative bg-[#1B3A2D] text-center py-24 px-6 overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#C9A227 1.5px, transparent 1.5px)", backgroundSize: "32px 32px" }} />
+        <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#C9A227] mb-5 relative z-10">Membership</motion.p>
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="text-5xl md:text-7xl font-serif font-bold text-[#FAF7F0] mb-6 leading-tight relative z-10">
+          Join the <span className="text-[#C9A227] italic">Nest.</span>
+        </motion.h1>
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="text-[#FAF7F0]/60 text-xl font-serif italic max-w-2xl mx-auto relative z-10 mb-4">
+          Real eggs. Real farms. Founding spots are limited — because real farms have real limits.
+        </motion.p>
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }}
+          className="text-[#FAF7F0]/45 text-base max-w-xl mx-auto relative z-10 leading-relaxed">
+          ₹20/egg — wholesome, honest, traceable.
+        </motion.p>
+      </div>
+
+      {/* Pricing Tiers */}
+      <div className="max-w-5xl mx-auto px-6 md:px-12 -mt-10 relative z-10 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {tiers.map((tier, idx) => (
+            <motion.div key={tier.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ delay: idx * 0.12 }}
+              className={`bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl relative ${
+                tier.popular ? "border-2 border-[#C9A227] ring-4 ring-[#C9A227]/10" : "border-2 border-transparent"
+              }`}>
+              {tier.popular && (
+                <div className="bg-[#C9A227] text-[#0F1F18] text-xs font-bold uppercase tracking-widest text-center py-2">
+                  Most Popular — Start Here
+                </div>
+              )}
+              <div className={`p-8 bg-[#FAF7F0] border-b border-[#EDE8DC] ${tier.popular ? "" : "pt-8"}`}>
+                <h3 className="text-2xl font-serif font-bold text-[#1B3A2D] mb-1">{tier.name}</h3>
+                <p className="text-[#0F1F18]/40 text-xs uppercase tracking-wider mb-4">{tier.tag}</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-5xl font-bold text-[#0F1F18]">{tier.perEgg}</span>
+                  <span className="text-[#4A7C5F] text-base font-medium">/ egg</span>
+                </div>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-lg font-bold text-[#1B3A2D]">{tier.weeklyTotal}</span>
+                  <span className="text-[#0F1F18]/40 text-sm">/week</span>
+                  <span className="text-[#0F1F18]/30 text-xs">·</span>
+                  <span className="text-[#0F1F18]/40 text-xs">{tier.monthlyNote}</span>
+                </div>
+                <div className="inline-block bg-[#1B3A2D] text-[#FAF7F0] px-4 py-1.5 rounded-full text-sm font-semibold">{tier.volume}</div>
+              </div>
+              <div className="p-8 flex-1 flex flex-col">
+                <ul className="space-y-4 flex-1 mb-8">
+                  {tier.features.map((feat, i) => (
+                    <li key={i} className="flex items-start">
+                      <Check className="w-4 h-4 text-[#C9A227] mr-3 shrink-0 mt-0.5" />
+                      <span className="text-[#0F1F18]/80 text-sm">{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button onClick={() => handleSelectPlan(tier.id)}
+                  className={`w-full rounded-full py-5 text-base font-semibold transition-all hover:shadow-lg ${
+                    tier.popular ? "bg-[#C9A227] hover:bg-[#b08e1f] text-[#0F1F18]" : "bg-[#1B3A2D] hover:bg-[#0F1F18] text-white"
+                  }`}>
+                  {tier.id === "custom" ? "Set My Own Count" : "Join This Plan"}
+                </Button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Delivery note */}
+      <div className="max-w-5xl mx-auto px-6 md:px-12 mt-8">
+        <div className="bg-[#EDE8DC] border-l-4 border-[#C9A227] rounded-xl px-6 py-4 flex items-start gap-3">
+          <span className="text-xl shrink-0 mt-0.5">📅</span>
+          <p className="text-[#0F1F18]/70 text-sm leading-relaxed">
+            <strong className="text-[#1B3A2D]">First delivery within 7 days</strong> of confirming your reservation. After that, your eggs arrive on a continuous weekly schedule — your own rolling cycle, not a shared bulk delivery day.
+          </p>
+        </div>
+      </div>
+
+      {/* Trust bar */}
+      <div className="bg-[#EDE8DC] py-6 px-6 mt-12">
+        <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-8 md:gap-12">
+          {["No lock-in contracts", "Pause anytime", "Cancel anytime", "Weekly wholesome delivery"].map((t) => (
+            <div key={t} className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-[#C9A227]" />
+              <span className="text-sm font-medium text-[#0F1F18]/70">{t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Perks + Form */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 grid grid-cols-1 lg:grid-cols-2 gap-16" ref={formRef}>
+        <div>
+          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+            className="text-3xl md:text-4xl font-serif font-bold text-[#0F1F18] mb-3">
+            More than just <span className="text-[#C9A227] italic">eggs.</span>
+          </motion.h2>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+            className="text-[#0F1F18]/60 mb-4 text-base leading-relaxed">
+            Your NatiNest membership connects you directly to Karnataka's finest free-roaming farms.
+          </motion.p>
+          <div className="space-y-7">
+            {perks.map((perk, i) => {
+              const Icon = perk.icon;
+              return (
+                <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex items-start gap-5 group">
+                  <div className="w-12 h-12 rounded-full bg-[#1B3A2D] flex items-center justify-center group-hover:bg-[#C9A227] transition-colors shrink-0 mt-0.5">
+                    <Icon className="w-5 h-5 text-[#FAF7F0]" />
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-[#0F1F18] font-serif">{perk.title}</p>
+                    <p className="text-[#0F1F18]/55 text-sm mt-1 leading-relaxed">{perk.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ delay: 0.4 }} className="mt-12 rounded-2xl overflow-hidden h-52 relative">
+            <motion.img src={farmEggs} alt="Fresh eggs from NatiNest farms" initial={{ scale: 1.0 }} whileInView={{ scale: 1.07 }}
+              viewport={{ once: true }} transition={{ duration: 7, ease: "linear" }} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-[#0F1F18]/40 flex items-end p-6">
+              <p className="text-[#FAF7F0] font-serif italic text-xl font-bold">"This is what your egg used to taste like."</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Reservation Form */}
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-lg border border-[#EDE8DC]">
+          <AnimatePresence mode="wait">
+            {success ? (
+              <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center justify-center h-full min-h-[420px] text-center">
+                <div className="text-6xl mb-6">🥚</div>
+                <h3 className="text-3xl font-serif font-bold text-[#1B3A2D] mb-4">Welcome to the Nest!</h3>
+                <p className="text-[#0F1F18]/70 text-base max-w-sm leading-relaxed">
+                  Your spot is secured. Our team will be in touch shortly to confirm your details and schedule your first delivery — arriving within 7 days.
+                </p>
+                <Button onClick={() => { setSuccess(false); form.reset(); }}
+                  className="mt-8 bg-transparent text-[#C9A227] border-2 border-[#C9A227] rounded-full hover:bg-[#C9A227] hover:text-white transition-all">
+                  Submit Another Request
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <div className="mb-8">
+                  <div className="w-8 h-[3px] bg-[#C9A227] mb-4" />
+                  <h3 className="text-2xl font-serif font-bold text-[#1B3A2D]">Reserve Your Spot</h3>
+                  <p className="text-[#0F1F18]/50 text-sm mt-2">No payment now. We confirm and your first delivery arrives within 7 days.</p>
+                </div>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <FormField control={form.control} name="fullName" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">Full Name</FormLabel>
+                        <FormControl><Input placeholder="Your full name" className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] rounded-xl" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <FormField control={form.control} name="email" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">Email</FormLabel>
+                          <FormControl><Input placeholder="you@example.com" type="email" className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] rounded-xl" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="phone" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">Phone Number</FormLabel>
+                          <FormControl><Input placeholder="+91 98765 43210" className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] rounded-xl" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+
+                    <FormField control={form.control} name="address" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">Full Delivery Address</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="House/flat no., street, area, landmark..." className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] resize-none rounded-xl" rows={3} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <FormField control={form.control} name="city" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">City / Area</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] rounded-xl">
+                                <SelectValue placeholder="Select city" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="bangalore">Bangalore</SelectItem>
+                              <SelectItem value="mysore">Mysore</SelectItem>
+                              <SelectItem value="other">Other (Join Waitlist)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+
+                      <FormField control={form.control} name="plan" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">Selected Plan</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] rounded-xl">
+                                <SelectValue placeholder="Select plan" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="weekly">Weekly Nest — 15 eggs/week · ₹300/wk</SelectItem>
+                              <SelectItem value="custom">Custom Nest — I'll choose my count · ₹20/egg</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+
+                    <AnimatePresence>
+                      {selectedPlan === "custom" && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+                          <FormField control={form.control} name="customCount" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">
+                                How many eggs per week?
+                                <span className="text-[#4A7C5F] normal-case tracking-normal ml-2 text-xs">(minimum 6)</span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input placeholder="e.g. 24" type="number" min={6}
+                                  className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] rounded-xl" {...field} />
+                              </FormControl>
+                              {field.value && parseInt(field.value) >= 6 && (
+                                <p className="text-[#4A7C5F] text-xs mt-1">
+                                  ≈ ₹{parseInt(field.value) * 20}/week · ₹{parseInt(field.value) * 20 * 4}/month
+                                </p>
+                              )}
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <FormField control={form.control} name="message" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#0F1F18]/70 text-xs uppercase tracking-wider">Message (Optional)</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Any special delivery instructions or questions..." className="bg-[#FAF7F0] border-[#EDE8DC] focus-visible:ring-[#C9A227] resize-none rounded-xl" rows={3} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <Button type="submit"
+                      className="w-full bg-[#C9A227] hover:bg-[#b08e1f] text-[#0F1F18] py-5 text-base font-bold rounded-full mt-2 transition-all hover:shadow-lg">
+                      Secure My Spot
+                    </Button>
+                    <p className="text-center text-xs text-[#0F1F18]/40 mt-2">No payment now. We'll confirm and share your delivery schedule directly.</p>
+                  </form>
+                </Form>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+================================================================================
+FILE: artifacts/natinest/src/pages/not-found.tsx
+================================================================================
+import { Link } from "wouter";
+
+export default function NotFound() {
+  return (
+    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 bg-[#FAF7F0]">
+      <p className="text-[#C9A227] text-[10px] font-bold uppercase tracking-[0.28em] mb-4">404</p>
+      <h1 className="font-serif text-5xl md:text-7xl font-bold text-[#1B3A2D] mb-4">This nest is empty.</h1>
+      <p className="text-[#0F1F18]/50 text-lg max-w-md leading-relaxed mb-10">
+        The page you're looking for doesn't exist. Maybe it laid its last egg and moved on.
+      </p>
+      <Link href="/"
+        className="inline-block bg-[#C9A227] text-[#0F1F18] px-8 py-4 rounded-full text-base font-bold hover:bg-[#b08e1f] hover:shadow-xl hover:-translate-y-1 transition-all">
+        Back to Home
+      </Link>
+    </div>
+  );
+}
+
+================================================================================
+  END OF FILE — NatiNest v1.0 Final
+  Co-Founders: Shreyas K & Gangadhar R
+================================================================================
