@@ -1,5 +1,13 @@
-export const farmShed  = "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1200&q=80&auto=format&fit=crop";
-export const farmFence = "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200&q=80&auto=format&fit=crop";
-export const farmEggs  = "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=1200&q=80&auto=format&fit=crop";
-export const farmCoop  = "https://images.unsplash.com/photo-1518492104633-130d0cc84637?w=1200&q=80&auto=format&fit=crop";
-export const farmLand  = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80&auto=format&fit=crop";
+import _logoImg   from "@assets/IMG-20260420-WA0277(1)_1778496631693.jpg";
+import _farmShed  from "@assets/20260326_183557_1778496683869.jpg";
+import _farmFence from "@assets/20260326_183826_1778496683924.jpg";
+import _farmEggs  from "@assets/20260326_184126_1778496654846.jpg";
+import _farmCoop  from "@assets/20260326_183205_1778496774858.jpg";
+import _farmLand  from "@assets/20260326_184511_1778496683956.jpg";
+
+export const logoImg   = _logoImg;
+export const farmShed  = _farmShed;
+export const farmFence = _farmFence;
+export const farmEggs  = _farmEggs;
+export const farmCoop  = _farmCoop;
+export const farmLand  = _farmLand;

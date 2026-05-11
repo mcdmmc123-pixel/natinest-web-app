@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { logoImg } from "@/assets";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -28,8 +29,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Logo + Name */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="h-10 w-10 rounded-full bg-[#1B3A2D] flex items-center justify-center shrink-0 shadow-sm">
-            <span className="font-serif text-xl font-bold text-[#C9A227] leading-none">N</span>
+          <div className="h-10 w-10 overflow-hidden rounded-full shrink-0 shadow-sm bg-[#FAF7F0]">
+            <img src={logoImg} alt="NatiNest" className="w-full object-cover object-top" style={{ height: "120%", objectPosition: "center 0%" }} />
           </div>
           <div className="flex items-baseline gap-0">
             <span className="font-serif text-2xl font-bold text-[#0F1F18] group-hover:text-[#1B3A2D] transition-colors">Nati</span>
@@ -63,8 +64,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {/* Close bar */}
             <div className="h-16 flex items-center justify-between px-6 md:px-12 border-b border-[#4A7C5F]/40">
               <Link href="/" className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-[#C9A227] flex items-center justify-center shrink-0">
-                  <span className="font-serif text-xl font-bold text-[#1B3A2D] leading-none">N</span>
+                <div className="h-10 w-10 overflow-hidden rounded-full shrink-0 bg-[#FAF7F0]">
+                  <img src={logoImg} alt="NatiNest" className="w-full object-cover object-top" style={{ height: "120%", objectPosition: "center 0%" }} />
                 </div>
                 <span className="font-serif text-2xl font-bold text-white">Nati<span className="text-[#C9A227]">Nest</span></span>
               </Link>
@@ -135,8 +136,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
             <div>
               <Link href="/" className="flex items-center gap-3 mb-5">
-                <div className="h-14 w-14 rounded-full bg-[#C9A227] flex items-center justify-center shrink-0">
-                  <span className="font-serif text-2xl font-bold text-[#1B3A2D] leading-none">N</span>
+                <div className="h-14 w-14 overflow-hidden rounded-full shrink-0 bg-[#FAF7F0]">
+                  <img src={logoImg} alt="NatiNest" className="w-full object-cover object-top" style={{ height: "120%", objectPosition: "center 0%" }} />
                 </div>
                 <span className="font-serif text-2xl font-bold">Nati<span className="text-[#C9A227]">Nest</span></span>
               </Link>
