@@ -156,7 +156,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex flex-col gap-4">
               <h4 className="text-xs font-bold tracking-widest uppercase text-[#C9A227] mb-1">NatiNest</h4>
               <p className="text-[#EDE8DC]/70 text-sm leading-relaxed max-w-xs">
-                Born from a genuine frustration with fake "farm-fresh" labels — we connect city families directly to Karnataka's finest free-roaming farms. No names needed. Only honest eggs.
+                Born from a genuine frustration with fake "farm-fresh" labels — connecting city families directly to Karnataka's finest free-roaming farms. Founded by Shreyas K (CEO) &amp; Gangadhar R (COO).
               </p>
               <p className="text-[#4A7C5F] text-sm mt-1">Karnataka, India</p>
             </div>

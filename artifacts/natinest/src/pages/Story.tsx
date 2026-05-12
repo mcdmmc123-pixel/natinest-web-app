@@ -258,17 +258,18 @@ export default function Story() {
           </div>
 
           {/* Founders */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-10 mb-12">
             {[
-              { name: "Shreyas K",    role: "Co-Founder" },
-              { name: "Gangadhar R",  role: "Co-Founder" },
+              { name: "Shreyas K",   role: "CEO", color: "#C9A227" },
+              { name: "Gangadhar R", role: "COO", color: "#4A7C5F" },
             ].map((f) => (
-              <div key={f.name} className="flex flex-col items-center gap-2">
-                <div className="w-16 h-16 rounded-full bg-[#C9A227]/20 border-2 border-[#C9A227]/40 flex items-center justify-center">
-                  <span className="text-2xl font-serif font-bold text-[#C9A227]">{f.name[0]}</span>
+              <div key={f.name} className="flex flex-col items-center gap-3">
+                <div className="w-20 h-20 rounded-full border-2 flex items-center justify-center" style={{ borderColor: f.color + "66", background: f.color + "18" }}>
+                  <span className="text-3xl font-serif font-bold" style={{ color: f.color }}>{f.name[0]}</span>
                 </div>
-                <p className="text-[#FAF7F0] font-serif font-bold text-base">{f.name}</p>
-                <p className="text-[#4A7C5F] text-xs uppercase tracking-widest">{f.role}</p>
+                <p className="text-[#FAF7F0] font-serif font-bold text-lg">{f.name}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: f.color }}>{f.role}</p>
+                <p className="text-[#4A7C5F] text-xs">Co-Founder · NatiNest</p>
               </div>
             ))}
           </div>

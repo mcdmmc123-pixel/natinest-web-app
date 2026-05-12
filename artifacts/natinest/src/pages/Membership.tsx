@@ -48,8 +48,8 @@ const tiers = [
       "Free weekly delivery",
       "Batch number & collection date on every carton",
       "Full traceability — sourced from verified Karnataka farms",
-      "First delivery within 7 days of confirmation",
-      "Continuous weekly flow — not a single bulk day",
+      "Eggs reach you within 24–48 hrs of laying",
+      "Continuous rolling cycle — no single bulk delivery day",
       "Pause or cancel anytime",
     ],
   },
@@ -68,7 +68,7 @@ const tiers = [
       "Free weekly delivery",
       "Batch number & collection date on every carton",
       "Full traceability — sourced from verified Karnataka farms",
-      "First delivery within 7 days of confirmation",
+      "Eggs reach you within 24–48 hrs of laying",
       "Pause or cancel anytime",
     ],
   },
@@ -200,9 +200,9 @@ export default function Membership() {
       {/* Delivery note */}
       <div className="max-w-5xl mx-auto px-6 md:px-12 mt-8">
         <div className="bg-[#EDE8DC] border-l-4 border-[#C9A227] rounded-xl px-6 py-4 flex items-start gap-3">
-          <span className="text-xl shrink-0 mt-0.5">📅</span>
+          <span className="text-xl shrink-0 mt-0.5">🥚</span>
           <p className="text-[#0F1F18]/70 text-sm leading-relaxed">
-            <strong className="text-[#1B3A2D]">First delivery within 7 days</strong> of confirming your reservation. After that, your eggs arrive on a continuous weekly schedule — your own rolling cycle, not a shared bulk delivery day.
+            <strong className="text-[#1B3A2D]">Laid today. At your door within 24–48 hours.</strong> Every egg goes straight from the farm to your kitchen — no cold room, no warehouse. You're on your own continuous rolling cycle, not a shared bulk delivery day.
           </p>
         </div>
       </div>
@@ -273,7 +273,7 @@ export default function Membership() {
                 <div className="text-6xl mb-6">🥚</div>
                 <h3 className="text-3xl font-serif font-bold text-[#1B3A2D] mb-4">Welcome to the Nest!</h3>
                 <p className="text-[#0F1F18]/70 text-base max-w-sm leading-relaxed">
-                  Your spot is secured. Our team will be in touch shortly to confirm your details and schedule your first delivery — arriving within 7 days.
+                  Your spot is secured. Our team will be in touch shortly to confirm your details and schedule your first delivery — arriving within 24–48 hours of collection.
                 </p>
                 <Button onClick={() => { setSuccess(false); form.reset(); }}
                   className="mt-8 bg-transparent text-[#C9A227] border-2 border-[#C9A227] rounded-full hover:bg-[#C9A227] hover:text-white transition-all">
@@ -285,7 +285,7 @@ export default function Membership() {
                 <div className="mb-8">
                   <div className="w-8 h-[3px] bg-[#C9A227] mb-4" />
                   <h3 className="text-2xl font-serif font-bold text-[#1B3A2D]">Reserve Your Spot</h3>
-                  <p className="text-[#0F1F18]/50 text-sm mt-2">No payment now. We confirm and your first delivery arrives within 7 days.</p>
+                  <p className="text-[#0F1F18]/50 text-sm mt-2">No payment now. We confirm and your eggs arrive within 24–48 hrs of collection.</p>
                 </div>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
