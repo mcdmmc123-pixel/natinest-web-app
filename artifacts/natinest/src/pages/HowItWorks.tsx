@@ -44,7 +44,7 @@ const fadeInUp = {
 
 export default function HowItWorks() {
   return (
-    <div className="w-full bg-[#EDE8DC] min-h-screen">
+    <div className="w-full bg-[#FAF7F0] min-h-screen">
       <div className="max-w-6xl mx-auto px-6 md:px-12 py-16 md:py-24">
 
         {/* Header */}

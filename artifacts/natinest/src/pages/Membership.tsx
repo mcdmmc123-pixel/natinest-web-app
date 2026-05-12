@@ -199,7 +199,7 @@ export default function Membership() {
 
       {/* Delivery note */}
       <div className="max-w-5xl mx-auto px-6 md:px-12 mt-8">
-        <div className="bg-[#EDE8DC] border-l-4 border-[#C9A227] rounded-xl px-6 py-4 flex items-start gap-3">
+        <div className="bg-[#F0F5F2] border-l-4 border-[#C9A227] rounded-xl px-6 py-4 flex items-start gap-3">
           <span className="text-xl shrink-0 mt-0.5">🥚</span>
           <p className="text-[#0F1F18]/70 text-sm leading-relaxed">
             <strong className="text-[#1B3A2D]">Laid today. At your door within 24–48 hours.</strong> Every egg goes straight from the farm to your kitchen — no cold room, no warehouse. You're on your own continuous rolling cycle, not a shared bulk delivery day.
@@ -208,7 +208,7 @@ export default function Membership() {
       </div>
 
       {/* Trust bar */}
-      <div className="bg-[#EDE8DC] py-6 px-6 mt-12">
+      <div className="bg-[#F0F5F2] py-6 px-6 mt-12">
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-8 md:gap-12">
           {["No lock-in contracts", "Pause anytime", "Cancel anytime", "Weekly wholesome delivery"].map((t) => (
             <div key={t} className="flex items-center gap-2">

@@ -136,7 +136,7 @@ export default function Home() {
 
       {/* LAUNCH TILES — asymmetric magazine layout */}
       <section className="w-full">
-        <div className="bg-[#0F1F18] py-10 px-6 text-center">
+        <div className="bg-[#1B3A2D] py-10 px-6 text-center">
           <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A227] mb-3">
             Know ur farmer before u know ur egg
