@@ -849,6 +849,17 @@ const perks = [
 
 const fadeInUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
 
+const RESERVATION_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwnjThMaqghgPWKoFeBBR-nkwgBbZ8qXMNfBCtAnCfxPjr4nwzPqwWm-AxSDBGur5DB-g/exec";
+
+const planLabel = (plan: string, customCount?: string) => {
+  if (plan === "custom") {
+    const count = customCount ? `${customCount} eggs/week` : "Custom count";
+    return `Custom Nest - ${count} - INR 20/egg`;
+  }
+
+  return "Weekly Nest - 15 eggs/week - INR 300/wk";
+};
+
 export default function Membership() {
   const [success, setSuccess] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
@@ -860,10 +871,30 @@ export default function Membership() {
 
   const selectedPlan = form.watch("plan");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form submitted", data);
-    setSuccess(true);
-    setTimeout(() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100);
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await fetch(RESERVATION_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          submittedAt: new Date().toISOString(),
+          fullName: data.fullName,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          city: data.city,
+          plan: planLabel(data.plan, data.customCount),
+          message: data.message || "",
+        }),
+      });
+
+      setSuccess(true);
+      setTimeout(() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100);
+    } catch (error) {
+      console.error("Reservation submission failed", error);
+      alert("Could not submit your reservation. Please try again or contact us directly.");
+    }
   };
 
   const handleSelectPlan = (planId: string) => {
@@ -1137,9 +1168,9 @@ export default function Membership() {
                       </FormItem>
                     )} />
 
-                    <Button type="submit"
+                    <Button type="submit" disabled={form.formState.isSubmitting}
                       className="w-full bg-[#C9A227] hover:bg-[#b08e1f] text-[#0F1F18] py-5 text-base font-bold rounded-full mt-2 transition-all hover:shadow-lg">
-                      Secure My Spot
+                      {form.formState.isSubmitting ? "Securing..." : "Secure My Spot"}
                     </Button>
                     <p className="text-center text-xs text-[#0F1F18]/40 mt-2">No payment now. We'll confirm and share your delivery schedule directly.</p>
                   </form>
