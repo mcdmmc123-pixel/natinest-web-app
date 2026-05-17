@@ -20,6 +20,8 @@
 - Enabled Windows x64 native package overrides locally in `pnpm-workspace.yaml` so the Vite dev server can run on this Windows machine.
 - Updated `pnpm-lock.yaml` with Windows-native dev dependencies using `npx pnpm install --no-frozen-lockfile --ignore-scripts`.
 - Started local Vite dev server at `http://localhost:5174/` and verified HTTP 200.
+- Tested deployed `https://natinest.in/api/reservations`; it returned HTTP 404, which means Vercel did not deploy the app-local serverless function for the current project root configuration.
+- Added duplicate root-level `api/reservations.ts` so `/api/reservations` works when Vercel project root is the repository root.
 
 ## Pending Tasks
 - Run production build on Linux/Replit/Vercel environment.
@@ -33,6 +35,7 @@
 - `artifacts/natinest/src/pages/Story.tsx`
 - `artifacts/natinest/src/pages/HowItWorks.tsx`
 - `artifacts/natinest/api/reservations.ts`
+- `api/reservations.ts`
 - `artifacts/natinest/.env.example`
 - `artifacts/natinest/DEPLOYMENT.md`
 - `google-apps-script.gs`
@@ -58,12 +61,14 @@
 - Root `pnpm install --frozen-lockfile` fails on Windows because the root `preinstall` script calls `sh`, which is unavailable in PowerShell/cmd.
 - Direct Vite build on Windows fails because `pnpm-workspace.yaml` intentionally overrides `rollup>@rollup/rollup-win32-x64-msvc` to `-`; this repo appears tuned for Linux/Replit builds. TypeScript verification passed.
 - Fixed local Windows hosting by allowing the Windows x64 native packages for Rollup, esbuild, Lightning CSS, and Tailwind Oxide.
+- Live production form failure found: `/api/reservations` returned 404 before the root-level API route was added.
 
 ## Deployment Status
 - Implementation is present in the cloned actual repo.
 - TypeScript verification passed.
-- Localhost dev server is running at `http://localhost:5174/`.
+- Localhost dev server was verified at `http://localhost:5174/`.
+- New root API route needs to be committed, pushed, and redeployed on Vercel.
 - Production build should be run on Linux/Replit/Vercel because Windows Rollup native optional dependency is intentionally excluded by workspace overrides.
 
 ## Exact Next Step
-- On Linux/Replit/Vercel, run `pnpm install --frozen-lockfile`, then `PORT=5173 BASE_PATH=/ pnpm --filter @workspace/natinest run build`.
+- Commit/push root `api/reservations.ts`, redeploy Vercel, then retest `https://natinest.in/api/reservations`.
