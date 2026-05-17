@@ -88,6 +88,9 @@ const fadeInUp: Variants = {
 };
 
 const RESERVATION_ENDPOINT = import.meta.env.VITE_RESERVATION_ENDPOINT || "/api/reservations";
+const RESERVATION_WEBHOOK_URL =
+  import.meta.env.VITE_RESERVATION_WEBHOOK_URL ||
+  "https://script.google.com/macros/s/AKfycbyw_W2K1cG6Uq4kLcH7jGXXDELge4cJV5GjZUQAt6FP61BAPJ1w6oe94ShJq-xWUvJ68w/exec";
 
 const planLabel = (plan: string, customCount?: string) => {
   if (plan === "custom") {
@@ -138,7 +141,7 @@ export default function Membership() {
       message: data.message?.trim() || "",
     };
 
-    try {
+    const submitViaApi = async () => {
       const response = await fetch(RESERVATION_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -148,6 +151,24 @@ export default function Membership() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok || result.status !== "success") {
         throw new Error(result.message || "Reservation submission failed");
+      }
+    };
+
+    const submitViaWebhook = async () => {
+      await fetch(RESERVATION_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(normalized),
+      });
+    };
+
+    try {
+      try {
+        await submitViaApi();
+      } catch (apiError) {
+        console.warn("Reservation API failed; falling back to Apps Script webhook", apiError);
+        await submitViaWebhook();
       }
 
       setSuccess(true);

@@ -20,6 +20,7 @@
 
 ## Required Environment Variables
 - `RESERVATION_WEBHOOK_URL`: Google Apps Script Web App `/exec` URL. Set this in Vercel project environment variables.
+- `VITE_RESERVATION_WEBHOOK_URL`: same Google Apps Script Web App `/exec` URL. This lets the frontend fall back to Apps Script directly if Vercel serverless routing is unavailable.
 - `PORT`: required by this Vite config for local/Replit runs, for example `5173`.
 - `BASE_PATH`: required by this Vite config, usually `/`.
 - `VITE_RESERVATION_ENDPOINT`: optional. Keep `/api/reservations` for Vercel.

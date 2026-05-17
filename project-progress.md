@@ -23,6 +23,8 @@
 - Tested deployed `https://natinest.in/api/reservations`; it returned HTTP 404, which means Vercel did not deploy the app-local serverless function for the current project root configuration.
 - Added duplicate root-level `api/reservations.ts` so `/api/reservations` works when Vercel project root is the repository root.
 - After remote changes, confirmed app-local `artifacts/natinest/api/reservations.ts` was missing while Vercel is building with `artifacts/natinest` as project root. Re-added the app-local API route.
+- Live `https://natinest.in/api/reservations` continued to return 404 after the app-local route deploy. Direct POST to the Apps Script URL returned `{"status":"success"}`.
+- Added frontend fallback in `Membership.tsx`: try `/api/reservations` first, then post directly to Apps Script with `no-cors` if the Vercel API route is unavailable.
 
 ## Pending Tasks
 - Run production build on Linux/Replit/Vercel environment.
@@ -46,6 +48,7 @@
 
 ## Environment Variables Required
 - `RESERVATION_WEBHOOK_URL`: Google Apps Script Web App `/exec` URL.
+- `VITE_RESERVATION_WEBHOOK_URL`: optional frontend fallback URL; defaults to current deployed Apps Script URL if absent.
 - `PORT`: required by repo Vite config, example `5173`.
 - `BASE_PATH`: required by repo Vite config, usually `/`.
 - `VITE_RESERVATION_ENDPOINT`: optional; defaults to `/api/reservations`.
@@ -72,4 +75,4 @@
 - Production build should be run on Linux/Replit/Vercel because Windows Rollup native optional dependency is intentionally excluded by workspace overrides.
 
 ## Exact Next Step
-- Commit/push restored `artifacts/natinest/api/reservations.ts`, redeploy Vercel, then retest `https://natinest.in/api/reservations`.
+- Commit/push frontend Apps Script fallback, redeploy Vercel, then submit a live form test.
