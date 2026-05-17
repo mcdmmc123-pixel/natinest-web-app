@@ -22,6 +22,7 @@
 - Started local Vite dev server at `http://localhost:5174/` and verified HTTP 200.
 - Tested deployed `https://natinest.in/api/reservations`; it returned HTTP 404, which means Vercel did not deploy the app-local serverless function for the current project root configuration.
 - Added duplicate root-level `api/reservations.ts` so `/api/reservations` works when Vercel project root is the repository root.
+- After remote changes, confirmed app-local `artifacts/natinest/api/reservations.ts` was missing while Vercel is building with `artifacts/natinest` as project root. Re-added the app-local API route.
 
 ## Pending Tasks
 - Run production build on Linux/Replit/Vercel environment.
@@ -71,4 +72,4 @@
 - Production build should be run on Linux/Replit/Vercel because Windows Rollup native optional dependency is intentionally excluded by workspace overrides.
 
 ## Exact Next Step
-- Commit/push root `api/reservations.ts`, redeploy Vercel, then retest `https://natinest.in/api/reservations`.
+- Commit/push restored `artifacts/natinest/api/reservations.ts`, redeploy Vercel, then retest `https://natinest.in/api/reservations`.
