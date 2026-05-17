@@ -25,6 +25,7 @@
 - After remote changes, confirmed app-local `artifacts/natinest/api/reservations.ts` was missing while Vercel is building with `artifacts/natinest` as project root. Re-added the app-local API route.
 - Live `https://natinest.in/api/reservations` continued to return 404 after the app-local route deploy. Direct POST to the Apps Script URL returned `{"status":"success"}`.
 - Added frontend fallback in `Membership.tsx`: try `/api/reservations` first, then post directly to Apps Script with `no-cors` if the Vercel API route is unavailable.
+- Vercel deployment for commit `6cc1db5` failed at function compilation with `api/reservations.ts: Emit skipped`, caused by the app TypeScript `noEmit` config. Converted both root and app-local Vercel API routes from `.ts` to `.js`.
 
 ## Pending Tasks
 - Run production build on Linux/Replit/Vercel environment.
@@ -37,8 +38,8 @@
 - `artifacts/natinest/src/pages/Home.tsx`
 - `artifacts/natinest/src/pages/Story.tsx`
 - `artifacts/natinest/src/pages/HowItWorks.tsx`
-- `artifacts/natinest/api/reservations.ts`
-- `api/reservations.ts`
+- `artifacts/natinest/api/reservations.js`
+- `api/reservations.js`
 - `artifacts/natinest/.env.example`
 - `artifacts/natinest/DEPLOYMENT.md`
 - `google-apps-script.gs`
@@ -75,4 +76,4 @@
 - Production build should be run on Linux/Replit/Vercel because Windows Rollup native optional dependency is intentionally excluded by workspace overrides.
 
 ## Exact Next Step
-- Commit/push frontend Apps Script fallback, redeploy Vercel, then submit a live form test.
+- Commit/push JavaScript API route conversion, redeploy Vercel, then submit a live form test.

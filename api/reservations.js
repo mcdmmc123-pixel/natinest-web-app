@@ -1,10 +1,10 @@
-const REQUIRED_FIELDS = ["submissionId", "fullName", "email", "phone", "address", "city", "plan", "eggsPerWeek"] as const;
+const REQUIRED_FIELDS = ["submissionId", "fullName", "email", "phone", "address", "city", "plan", "eggsPerWeek"];
 
-function isPresent(value: unknown) {
+function isPresent(value) {
   return typeof value === "string" ? value.trim().length > 0 : value !== undefined && value !== null;
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ status: "error", message: "Method not allowed" });
@@ -15,7 +15,7 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({ status: "error", message: "Reservation webhook is not configured" });
   }
 
-  let payload: Record<string, unknown>;
+  let payload;
   try {
     payload = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
   } catch {
@@ -34,7 +34,7 @@ export default async function handler(req: any, res: any) {
   });
 
   const text = await response.text();
-  let result: { status?: string; message?: string } = {};
+  let result = {};
   try {
     result = JSON.parse(text);
   } catch {
