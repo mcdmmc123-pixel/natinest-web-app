@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { MarqueeStrip } from "@/components/MarqueeStrip";
 
 import { farmShed, farmFence, farmEggs, farmCoop, farmLand } from "@/assets";
 
 const heroPhotos = [farmLand, farmFence, farmCoop, farmShed, farmEggs];
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden:  { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 };

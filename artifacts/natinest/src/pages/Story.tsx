@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 import { farmLand, farmFence, farmEggs, farmShed } from "@/assets";
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden:  { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 };

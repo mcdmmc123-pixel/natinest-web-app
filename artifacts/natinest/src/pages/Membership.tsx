@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Check, Truck, MapPin, Package, Star, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,14 +12,14 @@ import { Button } from "@/components/ui/button";
 import { farmEggs } from "@/assets";
 
 const formSchema = z.object({
-  fullName:     z.string().min(2, "Name is required"),
-  phone:        z.string().min(10, "Valid phone number is required"),
-  email:        z.string().email("Valid email is required"),
-  address:      z.string().min(10, "Please enter your full delivery address"),
+  fullName:     z.string().trim().min(2, "Name is required"),
+  phone:        z.string().trim().regex(/^[+()\-\s\d]{10,20}$/, "Valid phone number is required"),
+  email:        z.string().trim().email("Valid email is required"),
+  address:      z.string().trim().min(10, "Please enter your full delivery address"),
   city:         z.string().min(1, "Please select a city"),
   plan:         z.string().min(1, "Please select a plan"),
-  customCount:  z.string().optional(),
-  message:      z.string().optional(),
+  customCount:  z.string().trim().optional(),
+  message:      z.string().trim().max(1000, "Message is too long").optional(),
 }).refine((data) => {
   if (data.plan === "custom") {
     const count = parseInt(data.customCount ?? "0");
@@ -82,13 +82,29 @@ const perks = [
   { icon: ShieldCheck, title: "Pause or cancel anytime",           desc: "No lock-in. No penalties. Your membership, your rules." },
 ];
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden:  { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
+const RESERVATION_ENDPOINT = import.meta.env.VITE_RESERVATION_ENDPOINT || "/api/reservations";
+
+const planLabel = (plan: string, customCount?: string) => {
+  if (plan === "custom") {
+    const count = customCount ? `${customCount} eggs/week` : "Custom count";
+    return `Custom Nest - ${count} - INR 20/egg`;
+  }
+
+  return "Weekly Nest - 15 eggs/week - INR 300/wk";
+};
+
+const eggsPerWeek = (plan: string, customCount?: string) => (
+  plan === "custom" ? parseInt(customCount || "0", 10) : 15
+);
+
 export default function Membership() {
   const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<FormValues>({
@@ -107,10 +123,39 @@ export default function Membership() {
 
   const selectedPlan = form.watch("plan");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form submitted", data);
-    setSuccess(true);
-    setTimeout(() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100);
+  const onSubmit = async (data: FormValues) => {
+    setSubmitError("");
+    const normalized = {
+      submittedAt: new Date().toISOString(),
+      submissionId: crypto.randomUUID(),
+      fullName: data.fullName.trim(),
+      email: data.email.trim().toLowerCase(),
+      phone: data.phone.trim(),
+      address: data.address.trim(),
+      city: data.city,
+      plan: planLabel(data.plan, data.customCount),
+      eggsPerWeek: eggsPerWeek(data.plan, data.customCount),
+      message: data.message?.trim() || "",
+    };
+
+    try {
+      const response = await fetch(RESERVATION_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(normalized),
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.status !== "success") {
+        throw new Error(result.message || "Reservation submission failed");
+      }
+
+      setSuccess(true);
+      setTimeout(() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100);
+    } catch (error) {
+      console.error("Reservation submission failed", error);
+      setSubmitError(error instanceof Error ? error.message : "Could not submit your reservation. Please try again or contact us directly.");
+    }
   };
 
   const handleSelectPlan = (planId: string) => {
@@ -417,9 +462,15 @@ export default function Membership() {
                       </FormItem>
                     )} />
 
-                    <Button type="submit"
+                    {submitError && (
+                      <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                        {submitError}
+                      </p>
+                    )}
+
+                    <Button type="submit" disabled={form.formState.isSubmitting}
                       className="w-full bg-[#C9A227] hover:bg-[#b08e1f] text-[#0F1F18] py-5 text-base font-bold rounded-full mt-2 transition-all hover:shadow-lg">
-                      Secure My Spot
+                      {form.formState.isSubmitting ? "Securing..." : "Secure My Spot"}
                     </Button>
                     <p className="text-center text-xs text-[#0F1F18]/40 mt-2">No payment now. We'll confirm and share your delivery schedule directly.</p>
 
